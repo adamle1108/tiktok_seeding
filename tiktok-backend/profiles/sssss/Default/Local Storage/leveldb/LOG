@@ -1,0 +1,8 @@
+2025/04/20-02:16:58.081 20d5449 Reusing MANIFEST /Users/ad/Documents/App/ChatWebSocket/tiktok-backend/profiles/sssss/Default/Local Storage/leveldb/MANIFEST-000001
+2025/04/20-02:16:58.085 20d5449 Recovering log #4
+2025/04/20-02:16:58.086 20d5449 Level-0 table #6: started
+2025/04/20-02:16:58.095 20d5449 Level-0 table #6: 28613 bytes OK
+2025/04/20-02:16:58.096 20d5449 Recovering log #6
+2025/04/20-02:16:58.099 20d5449 Reusing old log /Users/ad/Documents/App/ChatWebSocket/tiktok-backend/profiles/sssss/Default/Local Storage/leveldb/000006.log 
+2025/04/20-02:16:58.101 20d5449 Delete type=0 #4
+2025/04/20-02:16:58.101 20d5449 Delete type=2 #7

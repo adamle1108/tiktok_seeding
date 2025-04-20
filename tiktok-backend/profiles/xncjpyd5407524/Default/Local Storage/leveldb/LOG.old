@@ -1,0 +1,15 @@
+2025/04/20-01:26:39.673 20bd846 Reusing MANIFEST /Users/ad/Documents/App/ChatWebSocket/tiktok-backend/profiles/xncjpyd5407524/Default/Local Storage/leveldb/MANIFEST-000001
+2025/04/20-01:26:39.676 20bd846 Recovering log #45
+2025/04/20-01:26:39.678 20bd846 Reusing old log /Users/ad/Documents/App/ChatWebSocket/tiktok-backend/profiles/xncjpyd5407524/Default/Local Storage/leveldb/000045.log 
+2025/04/20-01:27:39.682 20bd848 Level-0 table #48: started
+2025/04/20-01:27:39.685 20bd848 Level-0 table #48: 22909 bytes OK
+2025/04/20-01:27:39.688 20bd848 Delete type=0 #45
+2025/04/20-01:27:39.690 20bd848 Compacting 4@0 + 1@1 files
+2025/04/20-01:27:39.695 20bd848 Generated table #49@0: 70 keys, 157384 bytes
+2025/04/20-01:27:39.695 20bd848 Compacted 4@0 + 1@1 files => 157384 bytes
+2025/04/20-01:27:39.696 20bd848 compacted to: files[ 0 1 0 0 0 0 0 ]
+2025/04/20-01:27:39.697 20bd848 Delete type=2 #48
+2025/04/20-01:27:39.697 20bd848 Delete type=2 #39
+2025/04/20-01:27:39.697 20bd848 Delete type=2 #36
+2025/04/20-01:27:39.697 20bd848 Delete type=2 #41
+2025/04/20-01:27:39.697 20bd848 Delete type=2 #44
