@@ -1,6 +1,15 @@
-2025/04/20-03:47:21.942 20fe24b Reusing MANIFEST /Users/ad/Documents/App/ChatWebSocket/tiktok-backend/profiles/peoplio_wallpaper/Default/Local Storage/leveldb/MANIFEST-000001
-2025/04/20-03:47:21.948 20fe24b Recovering log #24
-2025/04/20-03:47:21.949 20fe24b Reusing old log /Users/ad/Documents/App/ChatWebSocket/tiktok-backend/profiles/peoplio_wallpaper/Default/Local Storage/leveldb/000024.log 
-2025/04/20-03:48:21.953 20fe24e Level-0 table #29: started
-2025/04/20-03:48:21.955 20fe24e Level-0 table #29: 24394 bytes OK
-2025/04/20-03:48:21.958 20fe24e Delete type=0 #24
+2025/04/21-21:40:38.869 21deea0 Reusing MANIFEST /Users/ad/Documents/App/tiktok_seeding/tiktok-backend/profiles/peoplio_wallpaper/Default/Local Storage/leveldb/MANIFEST-000001
+2025/04/21-21:40:38.871 21deea0 Recovering log #35
+2025/04/21-21:40:38.872 21deea0 Reusing old log /Users/ad/Documents/App/tiktok_seeding/tiktok-backend/profiles/peoplio_wallpaper/Default/Local Storage/leveldb/000035.log 
+2025/04/21-21:41:38.880 21deea2 Level-0 table #38: started
+2025/04/21-21:41:38.885 21deea2 Level-0 table #38: 27004 bytes OK
+2025/04/21-21:41:38.892 21deea2 Delete type=0 #35
+2025/04/21-21:41:38.894 21deea2 Compacting 4@0 + 1@1 files
+2025/04/21-21:41:38.899 21deea2 Generated table #39@0: 66 keys, 156789 bytes
+2025/04/21-21:41:38.899 21deea2 Compacted 4@0 + 1@1 files => 156789 bytes
+2025/04/21-21:41:38.901 21deea2 compacted to: files[ 0 1 0 0 0 0 0 ]
+2025/04/21-21:41:38.901 21deea2 Delete type=2 #29
+2025/04/21-21:41:38.901 21deea2 Delete type=2 #38
+2025/04/21-21:41:38.901 21deea2 Delete type=2 #34
+2025/04/21-21:41:38.901 21deea2 Delete type=2 #26
+2025/04/21-21:41:38.901 21deea2 Delete type=2 #31

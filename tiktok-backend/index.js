@@ -14,16 +14,6 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-const comments = [
-  "🔥 Hay quá trời ơi!",
-  "Video chất lượng vãi 😍",
-  "Ủng hộ bạn nè!",
-  "Đỉnh của chóp!",
-  "Nội dung siêu cuốn!",
-  "Chấm hết! 😎",
-];
-
-// 🍪 Parse raw cookie string → Puppeteer-compatible format
 function parseCookies(cookiesRaw) {
   return cookiesRaw.split(';').map(cookieStr => {
     const [name, ...valParts] = cookieStr.trim().split('=');
@@ -39,34 +29,34 @@ function parseCookies(cookiesRaw) {
   }).filter(Boolean);
 }
 
-// 🧼 Sanitize username để tránh lỗi tên file/folder
 function sanitizeUsername(username) {
   return username.replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
-// 🤖 Tự động comment ngẫu nhiên
-async function autoComment(page) {
+async function autoCommentLoop(page, comments, username) {
+  console.log(`💬 [${comments}] Bắt đầu vòng comment tự động...`);
+  let count = 1;
   while (true) {
     const comment = comments[Math.floor(Math.random() * comments.length)];
     const commentSelector = 'div[contenteditable][placeholder="Say something nice"]';
 
     try {
-      await page.waitForSelector(commentSelector, { visible: true });
+      await page.waitForSelector(commentSelector, { visible: true, timeout: 15000 });
       await page.focus(commentSelector);
       await page.type(commentSelector, comment, { delay: 100 });
-      console.log(`💬 Đã nhập comment: "${comment}"`);
+      console.log(`💬 [${username}] Nhập comment #${count}: "${comment}"`);
       await page.keyboard.press('Enter');
-      console.log('📨 Đã gửi comment!\n');
+      console.log(`📨 [${username}] Đã gửi comment!\n`);
+      count++;
       await new Promise(resolve => setTimeout(resolve, 15000));
     } catch (err) {
-      console.log('❌ Không tìm thấy ô comment. Có thể livestream đã kết thúc hoặc UI thay đổi.');
+      console.log(`❌ [${username}] Không tìm thấy ô comment hoặc không thể comment tiếp.`);
       break;
     }
   }
 }
 
-// 🎯 Xử lý tương tác cho từng user
-async function handleUserAction(user, action, videoUrl) {
+async function handleUserAction(user, videoUrl, comments) {
   const { username, password, cookiesRaw } = user;
   const safeUsername = sanitizeUsername(username);
   const userProfilePath = path.join(__dirname, 'profiles', safeUsername);
@@ -76,7 +66,7 @@ async function handleUserAction(user, action, videoUrl) {
     defaultViewport: null,
     userDataDir: userProfilePath,
     args: ['--no-sandbox'],
-    executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // ⚠️ Update nếu dùng OS khác
+    executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // Đổi nếu dùng Win/Linux
   };
 
   let browser;
@@ -90,7 +80,7 @@ async function handleUserAction(user, action, videoUrl) {
       browser = await puppeteer.launch(launchOptions);
     } catch (launchErr) {
       if (launchErr.message.includes('SingletonLock')) {
-        console.warn('⚠️ SingletonLock – Xóa profile lỗi và khởi động lại...');
+        console.warn('⚠️ SingletonLock – Xoá profile lỗi và khởi động lại...');
         fs.rmSync(userProfilePath, { recursive: true, force: true });
         fs.mkdirSync(userProfilePath, { recursive: true });
         browser = await puppeteer.launch(launchOptions);
@@ -101,65 +91,53 @@ async function handleUserAction(user, action, videoUrl) {
 
     const page = await browser.newPage();
 
-    // Nếu có cookies
-    if (cookiesRaw) {
-      const cookies = parseCookies(cookiesRaw);
-      console.log(`🍪 [${username}] Cookie từ client:`, cookies);
+    // if (cookiesRaw) {
+    //   const cookies = parseCookies(cookiesRaw);
+    //   console.log(`🍪 [${username}] Cookies từ client:`, cookies);
 
-      await page.setCookie(...cookies);
-      await page.goto('https://www.tiktok.com/', { waitUntil: 'domcontentloaded' });
+    //   await page.setCookie(...cookies);
+    //   await page.goto('https://www.tiktok.com/', { waitUntil: 'domcontentloaded' });
 
-      const isLoggedIn = await page.evaluate(() => {
-        return !document.body.innerText.includes('Log in');
-      });
+    //   const isLoggedIn = await page.evaluate(() => {
+    //     return !document.body.innerText.includes('Log in');
+    //   });
 
-      console.log(`✅ [${username}] Trạng thái đăng nhập: ${isLoggedIn}`);
-      if (!isLoggedIn) throw new Error("⚠️ Cookies không hợp lệ hoặc hết hạn!");
+    //   console.log(`✅ [${username}] Trạng thái đăng nhập: ${isLoggedIn}`);
+    //   if (!isLoggedIn) throw new Error("⚠️ Cookies không hợp lệ hoặc hết hạn!");
 
-      const updatedCookies = await page.cookies();
-      fs.writeFileSync(`./cookies/${safeUsername}.json`, JSON.stringify(updatedCookies, null, 2));
-    }
+    //   const updatedCookies = await page.cookies();
+    //   fs.writeFileSync(`./cookies/${safeUsername}.json`, JSON.stringify(updatedCookies, null, 2));
+    // }
 
-    // Truy cập video
     await page.goto(videoUrl, { waitUntil: 'networkidle2', timeout: 60000 });
 
-    // Login thủ công nếu chưa có cookies (có thể skip nếu chỉ dùng cookies)
-    // Login
-    // await page.click('#header-login-button');
-
-    // await page.locator('::-p-aria([name="Phone"][role="button"])').click();
-
-    // await page.locator('text/email').click();
-
-
-    // await page.evaluate(() => {
-    //   const link = document.querySelector('a[href="/login/phone-or-email/email"]');
-    //   if (link) link.click();
-    // });
-    // await page.waitForSelector('input[name="username"]');
-    // await page.type('input[name="username"]', username, { delay: 100 }); // delay cho tự nhiên
-    // await page.waitForSelector('input[placeholder="Password"]');
-    // await page.type('input[placeholder="Password"]', password, { delay: 100 });
-    // await page.click('[data-e2e="login-button"]');
-
-    // Thực hiện hành động
-    if (action === 'like') {
-      let count = 1;
+    // Like loop
+    let likeCount = 1;
+    const likeLoop = async () => {
       while (true) {
-        await page.waitForSelector('div.tiktok-pn4agh.e1tv929b2', { visible: true });
-        await page.click('div.tiktok-pn4agh.e1tv929b2');
-        console.log(`❤️ [${username}] Like lần ${count}`);
-        count++;
-        await new Promise(resolve => setTimeout(resolve, 30000));
+        try {
+          await page.waitForSelector('div.tiktok-pn4agh.e1tv929b2', { visible: true, timeout: 15000 });
+          await page.click('div.tiktok-pn4agh.e1tv929b2');
+          console.log(`❤️ [${username}] Like lần ${likeCount}`);
+          likeCount++;
+          await new Promise(resolve => setTimeout(resolve, 30000));
+        } catch (err) {
+          console.warn(`⚠️ [${username}] Không thể like tiếp: ${err.message}`);
+          break;
+        }
       }
-    } else if (action === 'comment') {
-      await autoComment(page);
-    } else if (action === 'share') {
-      await page.click('[data-e2e="share-icon"]');
-      console.log(`🔁 [${username}] Đã share!`);
-    } else {
-      throw new Error(`❌ Action không hợp lệ: ${action}`);
-    }
+    };
+
+    // Comment loop nếu có comment
+    const commentLoop = async () => {
+      console.log(`💬 [${comments}] Bắt đầu vòng comment tự động...`);
+      if (Array.isArray(comments) && comments.length > 0) {
+        await autoCommentLoop(page, comments, username);
+      }
+    };
+
+    // Bắn cả 2
+    await Promise.all([likeLoop(), commentLoop()]);
 
     return { username, status: 'success' };
   } catch (err) {
@@ -170,10 +148,10 @@ async function handleUserAction(user, action, videoUrl) {
   }
 }
 
-// 🚀 Route nhận danh sách user và chạy song song (giới hạn)
 app.post('/tiktok/action', async (req, res) => {
-  const { users, action, videoUrl } = req.body;
-  console.log(`🔥 TikTok backend đang chạy tại http://localhost:${users}`);
+  const { users, videoUrl, comments = [] } = req.body;
+  console.log(`🔥 Nhận yêu cầu action TikTok tại http://localhost:${port}`);
+
   if (!Array.isArray(users) || users.length === 0) {
     return res.status(400).json({ error: "Danh sách user không hợp lệ" });
   }
@@ -184,7 +162,7 @@ app.post('/tiktok/action', async (req, res) => {
   for (let i = 0; i < users.length; i += maxConcurrency) {
     const chunk = users.slice(i, i + maxConcurrency);
     const chunkResults = await Promise.allSettled(
-      chunk.map(user => handleUserAction(user, action, videoUrl))
+      chunk.map(user => handleUserAction(user, videoUrl, comments))
     );
     results.push(...chunkResults);
   }
@@ -193,5 +171,5 @@ app.post('/tiktok/action', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`🔥 TikTok backend đang chạy tại http://localhost:${port}`);
+  console.log(`🚀 TikTok backend đang chạy tại http://localhost:${port}`);
 });
